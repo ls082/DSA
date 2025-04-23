@@ -1,0 +1,236 @@
+INPUT :
+
+#include<iostream>
+#include<fstream>
+#include<cstdio>
+using namespace std;
+
+class student {
+public:
+    int rollno;
+    char name[50];
+    char add[50];
+    char div[5];
+
+    void setData() {
+        cout << "Enter Roll No: ";
+        cin >> rollno;
+        cout << "Enter Name: ";
+        cin >> name;
+        cout << "Address of student: ";
+        cin >> add;
+        cout << "Division of student: ";
+        cin >> div;
+    }
+
+    void showdata() {
+        cout << "\nRoll no. of student: " << rollno;
+        cout << "\nName of the student: " << name;
+        cout << "\nAddress of student: " << add;
+        cout << "\nDivision of student: " << div;
+    }
+
+    int retrollno() {
+        return rollno;
+    }
+
+    void write_record() {
+        ofstream outfile;
+        outfile.open("StudentData", ios::binary | ios::app);
+        student obj;
+        obj.setData();
+        outfile.write((char*)&obj, sizeof(obj));
+        outfile.close();
+    }
+
+    void display_record() {
+        ifstream infile;
+        infile.open("StudentData", ios::binary);
+        student obj;
+        bool flag = false;
+        while (infile.read((char*)&obj, sizeof(obj))) {
+            obj.showdata();
+            cout << endl;
+        }
+        if (!flag) {
+            cout << "No records found.\n";
+        }
+        infile.close();
+    }
+
+    void search_record(int n) {
+        ifstream infile;
+        infile.open("StudentData", ios::binary);
+        student obj;
+        bool flag = false;
+        while (infile.read((char*)&obj, sizeof(obj))) {
+            if (obj.retrollno() == n) {
+                obj.showdata();
+                flag = true;
+                break;
+            }
+        }
+        if (!flag) {
+            cout << "Record for roll no. " << n << " is not found.\n";
+        }
+        infile.close();
+    }
+
+    void delete_record(int n) {
+        student obj;
+        ifstream infile;
+        infile.open("StudentData", ios::binary);
+        ofstream outfile;
+        outfile.open("StudentNewData", ios::out | ios::binary);
+
+        while (infile.read((char*)&obj, sizeof(obj))) {
+            if (obj.retrollno() != n) {
+                outfile.write((char*)&obj, sizeof(obj));
+            }
+        }
+        infile.close();
+        outfile.close();
+
+        remove("StudentData");
+        rename("StudentNewData", "StudentData");
+
+        cout << "Record deleted successfully.\n";
+    }
+};
+
+int main() {
+    int ch;
+    do {
+        cout << "\n******File Operations******\n 1.Add Record. \n 2.Display Record. \n 3.Search a particular Record. \n 4.Delete particular Record. \n 5.Exit\n";
+        cout << "Enter your choice: ";
+        cin >> ch;
+
+        student obj;
+        switch (ch) {
+        case 1:
+            cout << "Enter total no. of records you want to store in a file: ";
+            int n;
+            cin >> n;
+            for (int i = 0; i < n; i++) {
+                obj.write_record();
+            }
+            break;
+
+        case 2:
+            cout << "\nList of records:\n";
+            obj.display_record();
+            break;
+
+        case 3:
+            cout << "Enter student roll no. whose record you want to search: ";
+            int s;
+            cin >> s;
+            obj.search_record(s);
+            break;
+
+        case 4:
+            cout << "Enter student roll no. whose record you want to delete: ";
+            int t;
+            cin >> t;
+            obj.delete_record(t);
+            break;
+
+        case 5:
+            return 0;
+
+        default:
+            cout << "Invalid choice.\n";
+        }
+    } while (ch != 5);
+}
+
+
+OUTPUT : 
+
+
+******File Operations******
+ 1.Add Record.
+ 2.Display Record.
+ 3.Search a particular Record.
+ 4.Delete particular Record.
+ 5.Exit
+Enter your choice: 1
+Enter total no. of records you want to store in a file: 3
+Enter Roll No: 12268
+Enter Name: vedant bagul
+Address of student: Division of student: B
+Enter Roll No: 12261
+Enter Name: laxman shelke
+Address of student: Division of student: B
+Enter Roll No: 12255
+Enter Name: harshraj patil
+Address of student: Division of student: B
+
+******File Operations******
+ 1.Add Record.
+ 2.Display Record.
+ 3.Search a particular Record.
+ 4.Delete particular Record.
+ 5.Exit
+
+Enter your choice: 2
+
+List of records:
+
+Roll no. of student: 12268
+Name of the student: vedant
+Address of student: bagul
+Division of student: B
+
+Roll no. of student: 12261
+Name of the student: laxman
+Address of student: shelke
+Division of student: B
+
+Roll no. of student: 12255
+Name of the student: harshraj
+Address of student: patil
+Division of student: B
+No records found.
+
+******File Operations******
+ 1.Add Record.
+ 2.Display Record.
+ 3.Search a particular Record.
+ 4.Delete particular Record.
+ 5.Exit
+
+Enter your choice: 3
+Enter student roll no. whose record you want to search: 12255
+
+Roll no. of student: 12255
+Name of the student: harshraj
+Address of student: patil
+Division of student: B
+******File Operations******
+ 1.Add Record.
+ 2.Display Record.
+ 3.Search a particular Record.
+ 4.Delete particular Record.
+ 5.Exit
+******File Operations******
+ 1.Add Record.
+ 2.Display Record.
+ 3.Search a particular Record.
+ 4.Delete particular Record.
+ 5.Exit
+Enter your choice: 4
+Enter student roll no. whose record you want to delete: 12261
+Record deleted successfully.
+
+******File Operations******
+ 1.Add Record.
+ 2.Display Record.
+ 3.Search a particular Record.
+ 4.Delete particular Record.
+ 5.Exit
+Enter your choice: 5
+
+--------------------------------
+Process exited after 112.9 seconds with return value 0
+Press any key to continue . . .
